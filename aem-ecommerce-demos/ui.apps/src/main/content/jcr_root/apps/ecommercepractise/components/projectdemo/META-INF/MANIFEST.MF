@@ -1,5 +1,0 @@
-Manifest-Version: 1.0
-Content-Package-Id: my_packages:projectdemo
-Content-Package-Roots: /apps/ecommercepractise/components/projectdemo1
-Content-Package-Type: application
-
