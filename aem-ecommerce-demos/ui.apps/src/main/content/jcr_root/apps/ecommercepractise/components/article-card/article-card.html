@@ -1,0 +1,7 @@
+<sly data-sly-use.articleModel="com.adobe.aem.ecommerce.demos.core.models.ArticleCardModel"
+     data-sly-use.templates="core/wcm/components/commons/v1/templates.html">
+<h3>Article Card</h3>
+<p class="article-root-path" data-stringfy-props="${articleModel.jsonStringData}">${articleModel.articleRootPath}</p>
+</sly>
+<sly data-sly-call="${templates.placeholder @ isEmpty=wcmmode.edit, emptyTextAppend='Click to Edit'}"></sly>
+
