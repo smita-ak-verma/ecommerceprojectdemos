@@ -17,6 +17,22 @@
                         fieldDescription="Pick the root page path."
                         fieldLabel="Select Page Path"
                         name="./articleRootPath"/>
+                    <articleType
+                            jcr:primaryType="nt:unstructured"
+                            sling:resourceType="granite/ui/components/coral/foundation/form/select"
+                            fieldLabel="Article Type"
+                            name="./articleType">
+                        <items jcr:primaryType="nt:unstructured">
+                            <banner
+                                    jcr:primaryType="nt:unstructured"
+                                    text="Banner"
+                                    value="banner"/>
+                            <article-card
+                                    jcr:primaryType="nt:unstructured"
+                                    text="Article Card"
+                                    value="articleCard"/>
+                        </items>
+                    </articleType>s
                 </items>
             </column>
         </items>
