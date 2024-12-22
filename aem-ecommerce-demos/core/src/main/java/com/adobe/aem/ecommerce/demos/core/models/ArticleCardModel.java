@@ -1,10 +1,13 @@
 package com.adobe.aem.ecommerce.demos.core.models;
 
 import com.adobe.aem.ecommerce.demos.core.beans.ArticleCard;
+import com.day.cq.tagging.Tag;
+import com.day.cq.tagging.TagManager;
 import com.day.cq.wcm.api.Page;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
@@ -12,7 +15,6 @@ import org.apache.sling.api.resource.ValueMap;
 import org.apache.sling.models.annotations.DefaultInjectionStrategy;
 import org.apache.sling.models.annotations.Model;
 import org.apache.sling.models.annotations.injectorspecific.SlingObject;
-import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.PostConstruct;
@@ -27,18 +29,24 @@ public class ArticleCardModel {
     /**
      * Logger LOG
      */
-    private static final Logger LOG = LoggerFactory.getLogger(ArticleCardModel.class);
+    private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(ArticleCardModel.class);
 
     /**
      * RESOURCE_TYPE.
      */
     protected static final String RESOURCE_TYPE = "ecommercepractise/components/article-card";
 
+    /**
+     * articleRootPath
+     */
     @Inject
     private String articleRootPath;
 
+    /**
+     * articleType
+     */
     @Inject
-    private String articleType;
+    private String articleType;  // Default Value=banner
 
     /**
      * resourceResolver
@@ -46,47 +54,121 @@ public class ArticleCardModel {
     @SlingObject
     private ResourceResolver resourceResolver;
 
+    /**
+     * String pageTitle
+     */
+    private String pageTitle;
+
+    /**
+     * String pageDescription
+     */
+    private String pageDescription;
+
+    /**
+     * String industryTag
+     */
+    private String industryTag;
+
+    /**
+     * String categoryTag
+     */
+    private String categoryTag;
+
+    /**
+     * String imagePathSrc
+     */
+    private String imagePathSrc;
+
+    /**
+     * String imageAltText
+     */
+    private String imageAltText;
+
+    /**
+     * String ctaUrl
+     */
+    private String ctaUrl;
+
+    /**
+     * String ctaLabel
+     */
+    private String ctaLabel;
+
+    /**
+     * String videoSrc
+     */
+    private String videoSrc;
+
+    /**
+     * articleCards
+     */
     private List<ArticleCard> articleCards;
 
-    private Map<String, Object> propertyMap= new HashMap<>();
+    /**
+     * propertyMap
+     */
+    private Map<String, Object> propertyMap = new HashMap<>();
 
+    /**
+     * jsonStringData
+     */
     private String jsonStringData;
 
     @PostConstruct
     protected void init() {
-    articleCards = new ArrayList<>();
+        articleCards = new ArrayList<>();
         Optional.ofNullable(resourceResolver.getResource(articleRootPath)).ifPresent(pageResource -> {
-        Page resourcePage = pageResource.adaptTo(Page.class);
-        Iterator<Page> childPages = resourcePage.listChildren();
-        while (childPages.hasNext()) {
-            Page childPage = childPages.next();
-
-            if ("articleCard".equals(articleType) || childPage.getProperties().get("showPageAsBanner", false)) {
-                processPage(childPage, articleCards);
+            Boolean isBanner = articleType.equals("banner");    // Setting whether its is Banner or Article-Card (using it later on for calling different Constructor)
+            Page resourcePage = pageResource.adaptTo(Page.class);
+            Iterator<Page> childPages = resourcePage.listChildren();
+            while (childPages.hasNext()) {
+                Page childPage = childPages.next();
+                if ("articleCard".equals(articleType) || childPage.getProperties().get("showPageAsBanner", false)) {
+                    processPage(childPage, articleCards);
+                    if (isBanner) {
+                        ArticleCard articleCard = new ArticleCard(industryTag, categoryTag, pageTitle, pageDescription, imagePathSrc, imageAltText);
+                        articleCards.add(articleCard);
+                    } else {
+                        ArticleCard articleCard = new ArticleCard(industryTag, categoryTag, pageTitle, pageDescription, imagePathSrc, imageAltText, ctaLabel, ctaUrl, videoSrc);
+                        articleCards.add(articleCard);
+                    }
+                }
             }
-        }
-    });
+        });
         propertyMap.put("article-cards", articleCards);
         jsonStringData = generateJsonString(propertyMap);
-        LOG.info("Final Json Data=>> {}", jsonStringData);
+        LOG.info("*** Final Data=>> {}", jsonStringData);
     }
-
 
     private void processPage(Page childPage, List<ArticleCard> articleCards) {
-        String pageTitle = childPage.getProperties().get("jcr:title", StringUtils.EMPTY);
-        String pageDescription = childPage.getProperties().get("jcr:description", StringUtils.EMPTY);
-        String imagePathRef = getImageReference(childPage);
-        ArticleCard articleCard = new ArticleCard(pageTitle, pageDescription, imagePathRef);
-
-        articleCards.add(articleCard);
+        pageTitle = childPage.getProperties().get("jcr:title", StringUtils.EMPTY);
+        pageDescription = childPage.getProperties().get("jcr:description", StringUtils.EMPTY);
+        ctaLabel = childPage.getProperties().get("ctaLabel", StringUtils.EMPTY);
+        ctaUrl = childPage.getProperties().get("ctaUrl", StringUtils.EMPTY);
+        videoSrc = childPage.getProperties().get("videoUrl", StringUtils.EMPTY);
+        industryTag = getTagTitle(childPage.getProperties().get("industryTag", StringUtils.EMPTY));
+        categoryTag = getTagTitle(childPage.getProperties().get("categoryTag", StringUtils.EMPTY));
+        imagePathSrc = getImageReference(childPage).getLeft();
+        imageAltText = getImageReference(childPage).getRight();
     }
 
-    private String getImageReference(Page childPage) {
-        return Optional.ofNullable(childPage) // Check if childPage is not null
-                .map(page -> page.getContentResource("cq:featuredimage")) // Get the featured image resource
-                .map(resource -> resource.adaptTo(ValueMap.class)) // Adapt the resource to a ValueMap
-                .map(properties -> properties.get("fileReference", String.class)) // Get the fileReference property
-                .orElse(StringUtils.EMPTY); // Return EMPTY if any step is null or missing
+    private String getTagTitle(String tagPath) {
+        TagManager tagManager = resourceResolver.adaptTo(TagManager.class);
+        return Optional.ofNullable(tagManager)
+                .map(manager -> manager.resolve(tagPath))   // Resolve the tag
+                .map(Tag::getTitle)
+                .orElse(StringUtils.EMPTY);     // Return EMPTY if tagManager is null
+    }
+
+    private Pair<String, String> getImageReference(Page childPage) {
+        return Optional.ofNullable(childPage)
+                .map(page -> page.getContentResource("cq:featuredimage"))
+                .map(resource -> resource.adaptTo(ValueMap.class))
+                .map(properties -> Pair.of(
+                        properties.get("fileReference", StringUtils.EMPTY), // First value
+                        properties.get("alt", StringUtils.EMPTY) // Second value
+                ))
+                .orElse(Pair.of(StringUtils.EMPTY, StringUtils.EMPTY));
     }
 
     private String generateJsonString(final Map<String, Object> commonPropMap) {
@@ -110,6 +192,5 @@ public class ArticleCardModel {
     public String getJsonStringData() {
         return jsonStringData;
     }
-
 }
 
