@@ -1,0 +1,16 @@
+<div class="team-component">
+    <h2>Our Team</h2>
+    <div class="team-members">
+        <sly data-sly-use.ourTeamMemberModel="com.adobe.aem.ecommerce.demos.core.models.OurTeamMembersModel"
+            data-sly-use.templates="core/wcm/components/commons/v1/templates.html">
+            <sly data-sly-list.member="${ourTeamMemberModel.teamMembers}">
+                <div class="team-member">
+                    <img src="${member.image}" alt="${member.name}" />
+                    <h3>${member.name}</h3>
+                    <p>${member.role}</p>
+                </div>
+            </sly>
+        </sly>
+    </div>
+</div>
+<sly data-sly-call="${templates.placeholder @ isEmpty=wcmmode.edit, emptyTextAppend='Click to Edit'}"></sly>
