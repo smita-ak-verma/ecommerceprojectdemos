@@ -1,0 +1,13 @@
+<sly data-sly-use.heroBannerModel="com.adobe.aem.ecommerce.demos.core.models.HeroBannerModel">
+<img src="${heroBannerModel.src}" alt="XYZ Image"/>
+<div>
+    <h2 class="title">${heroBannerModel.technologyWeUse}</h2>
+</div>
+<div class="technology-main-block" data-sly-list.techObject="${heroBannerModel.technologyData}">
+    <div class="technology-individual-block">
+        <p class="tech-title">${techObject.title}</p>
+        <p class="tech-framework">${techObject.technology}</p>
+    </div>
+</div>
+</sly>
+
