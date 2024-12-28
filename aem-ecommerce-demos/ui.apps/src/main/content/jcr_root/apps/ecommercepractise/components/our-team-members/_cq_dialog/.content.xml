@@ -15,11 +15,13 @@
                         jcr:primaryType="nt:unstructured"
                         sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
                         fieldLabel="Sub Header"
+                        emptyText="Sub Header"
                         name="./subheader"/>
                     <title
                         jcr:primaryType="nt:unstructured"
                         sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
                         fieldLabel="Title"
+                        emptyText="Title"
                         name="./title"/>
                     <teamOverview
                         jcr:primaryType="nt:unstructured"
@@ -41,18 +43,28 @@
                                     jcr:primaryType="nt:unstructured"
                                     sling:resourceType="/libs/granite/ui/components/coral/foundation/form/pathfield"
                                     fieldLabel="Image"
+                                    emptyText="Add a image"
                                     name="./image"
+                                    required="{Boolean}true"/>
+                                <alt
+                                    jcr:primaryType="nt:unstructured"
+                                    sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
+                                    fieldLabel="Image Alt Text"
+                                    emptyText="Alternate text for image"
+                                    name="./alt"
                                     required="{Boolean}true"/>
                                 <name
                                     jcr:primaryType="nt:unstructured"
                                     sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
                                     fieldLabel="Name"
+                                    emptyText="Name"
                                     name="./name"
                                     required="{Boolean}true"/>
                                 <role
                                     jcr:primaryType="nt:unstructured"
                                     sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
                                     fieldLabel="Role"
+                                    emptyText="Role"
                                     name="./role"
                                     required="{Boolean}true"/>
                             </items>

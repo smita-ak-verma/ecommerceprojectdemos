@@ -74,6 +74,7 @@ public class OurTeamMembersModelImpl implements OurTeamMembersModel {
                 ValueMap properties = link.getValueMap();
                 TeamMember teamMember = new TeamMember(
                         properties.get("image", StringUtils.EMPTY),
+                        properties.get("alt", StringUtils.EMPTY),
                         properties.get("name", StringUtils.EMPTY),
                         properties.get("role", StringUtils.EMPTY)
                 );

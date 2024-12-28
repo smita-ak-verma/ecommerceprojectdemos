@@ -15,8 +15,9 @@
     <div class="teammember-main-block" 
         data-sly-list.teamMembersDetails="${ourTeamMembersModel.teamMembersDetails}">
         <img src="${teamMembersDetails.image}" 
-            alt="Team Member Image" 
-            style="width:250px;height:350px;"/>
+            alt="${teamMembersDetails.alt}" 
+            style="width:250px;
+                    height:350px;"/>
         <p class="member-name">${teamMembersDetails.name}</p>
         <p class="member-role">${teamMembersDetails.role}</p>
     </div>
