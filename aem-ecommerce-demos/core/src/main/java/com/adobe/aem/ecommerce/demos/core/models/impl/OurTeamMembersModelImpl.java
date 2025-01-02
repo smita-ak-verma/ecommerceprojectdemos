@@ -11,6 +11,10 @@ import org.apache.sling.models.annotations.DefaultInjectionStrategy;
 import org.apache.sling.models.annotations.Model;
 import org.apache.sling.models.annotations.injectorspecific.ChildResource;
 import org.apache.sling.models.annotations.injectorspecific.ValueMapValue;
+import org.apache.sling.models.annotations.Exporter;
+import org.apache.sling.models.annotations.ExporterOption;
+import com.fasterxml.jackson.annotation.JsonRootName;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,8 +26,17 @@ import java.util.Optional;
 @Model(
         adaptables = SlingHttpServletRequest.class,
         adapters = OurTeamMembersModel.class,
+        resourceType = OurTeamMembersModelImpl.RESOURCE_TYPE,
         defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL
 )
+@Exporter(  
+            name = "jackson", 
+            extensions ="json",
+            options = {
+                @ExporterOption(name = "SerializationFeature.WRAP_ROOT_VALUE", value="true")
+            }
+)
+@JsonRootName("team-member")
 public class OurTeamMembersModelImpl implements OurTeamMembersModel {
 
     /**
@@ -100,6 +113,7 @@ public class OurTeamMembersModelImpl implements OurTeamMembersModel {
     }
 
     @Override
+    @JsonProperty(value = "teamMembers")
     public List<TeamMember> getTeamMembersDetails() {
         return teamMembersDetails;
     }
