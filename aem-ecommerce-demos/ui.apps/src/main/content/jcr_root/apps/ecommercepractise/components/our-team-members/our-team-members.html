@@ -1,0 +1,25 @@
+<sly data-sly-use.ourTeamMembersModel="com.adobe.aem.ecommerce.demos.core.models.OurTeamMembersModel">
+    
+    <p style="text-align: left; color: orange;">${ourTeamMembersModel.subheader}</p>
+    <p style="text-align: left; 
+            font-size: large; 
+            font-weight: bold;
+            display: inline-block;
+            width: 47%;
+            padding: 1%;">${ourTeamMembersModel.title}</p>
+    <p style="text-align: right;
+            display: inline-block;
+            width: 47%;
+            padding: 1%;">${ourTeamMembersModel.teamOverview}</p>
+
+    <div class="teammember-main-block" 
+        data-sly-list.teamMembersDetails="${ourTeamMembersModel.teamMembersDetails}">
+        <div class="teammember-sub-block" style="display:inline-block;">
+            <img src="${teamMembersDetails.image}" 
+                alt="${teamMembersDetails.alt}" 
+                style="width:300px; height:350px;"/>
+            <p class="member-name">${teamMembersDetails.name}</p>
+            <p class="member-role">${teamMembersDetails.role}</p>
+        </div> 
+    </div>
+</sly>
