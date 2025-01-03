@@ -80,21 +80,25 @@ public class OurTeamMembersModelImpl implements OurTeamMembersModel {
      */
     @PostConstruct
     protected void init() {
-        teamMembersDetails = new ArrayList<>();
-        Optional.ofNullable(teamMembers).ifPresent(items -> {
-            Iterable<Resource> links = items.getChildren();
-            links.forEach(link -> {
-                ValueMap properties = link.getValueMap();
-                TeamMember teamMember = new TeamMember(
-                        properties.get("image", StringUtils.EMPTY),
-                        properties.get("alt", StringUtils.EMPTY),
-                        properties.get("name", StringUtils.EMPTY),
-                        properties.get("role", StringUtils.EMPTY)
-                );
-                teamMembersDetails.add(teamMember);
-                LOG.info("Team Member Details : " +teamMember);
+        try{
+            teamMembersDetails = new ArrayList<>();
+            Optional.ofNullable(teamMembers).ifPresent(items -> {
+                Iterable<Resource> links = items.getChildren();
+                links.forEach(link -> {
+                    ValueMap properties = link.getValueMap();
+                    TeamMember teamMember = new TeamMember(
+                            properties.get("image", StringUtils.EMPTY),
+                            properties.get("alt", StringUtils.EMPTY),
+                            properties.get("name", StringUtils.EMPTY),
+                            properties.get("role", StringUtils.EMPTY)
+                    );
+                    teamMembersDetails.add(teamMember);
+                    LOG.info("Team Member Details : " +teamMember);
+                });
             });
-        });
+        }catch (Exception e){
+            LOG.info("\n ERROR while getting Member Details {} ",e.getMessage());
+        }
     }
 
     @Override
